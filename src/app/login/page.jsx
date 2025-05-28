@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import {
   Box,
@@ -27,10 +28,11 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      router.push('/');
-    } else {
-      alert('Invalid credentials');
-    }
+        router.push('/');
+        toast.success('Login successful! 🎉');
+      } else {
+        toast.error('Invalid email or password');
+      }
   };
 
   return (
