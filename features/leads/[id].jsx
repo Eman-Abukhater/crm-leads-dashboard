@@ -15,7 +15,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useRouter } from 'next/navigation';
 
 export default function LeadDetailsPage() {
-  const { id } = useParams(); // Next.js 13+ App Router
+  const { id } = useParams(); // Get the lead ID from the URL parameters
   const router = useRouter();
   const { data: leads, isLoading } = useLeads();
 
