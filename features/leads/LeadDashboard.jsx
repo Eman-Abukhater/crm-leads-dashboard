@@ -1,6 +1,6 @@
-'use client';
-import React from 'react';
-import { useLeads } from './hooks';
+"use client";
+import React from "react";
+import { useLeads } from "./hooks";
 import {
   Container,
   Typography,
@@ -14,7 +14,8 @@ import {
   TableCell,
   TableBody,
   Box,
-} from '@mui/material';
+} from "@mui/material";
+import Link from "next/link";
 
 export default function LeadDashboard() {
   const { data: leads, isLoading } = useLeads();
@@ -28,8 +29,12 @@ export default function LeadDashboard() {
   }
 
   // Count leads by status
-  const inProgressCount = leads.filter(lead => lead.status === 'In Progress').length;
-  const convertedCount = leads.filter(lead => lead.status === 'Converted').length;
+  const inProgressCount = leads.filter(
+    (lead) => lead.status === "In Progress"
+  ).length;
+  const convertedCount = leads.filter(
+    (lead) => lead.status === "Converted"
+  ).length;
   const totalLeads = leads.length;
 
   return (
@@ -41,7 +46,7 @@ export default function LeadDashboard() {
       {/* Stats cards */}
       <Grid container spacing={3} mb={4}>
         <Grid item xs={12} md={4}>
-          <Card sx={{ bgcolor: '#e3f2fd' }}>
+          <Card sx={{ bgcolor: "#e3f2fd" }}>
             <CardContent>
               <Typography variant="h6">Total Leads</Typography>
               <Typography variant="h5">{totalLeads}</Typography>
@@ -49,7 +54,7 @@ export default function LeadDashboard() {
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Card sx={{ bgcolor: '#fff3e0' }}>
+          <Card sx={{ bgcolor: "#fff3e0" }}>
             <CardContent>
               <Typography variant="h6">In Progress</Typography>
               <Typography variant="h5">{inProgressCount}</Typography>
@@ -57,7 +62,7 @@ export default function LeadDashboard() {
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Card sx={{ bgcolor: '#e8f5e9' }}>
+          <Card sx={{ bgcolor: "#e8f5e9" }}>
             <CardContent>
               <Typography variant="h6">Converted</Typography>
               <Typography variant="h5">{convertedCount}</Typography>
@@ -84,9 +89,11 @@ export default function LeadDashboard() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {leads.map(lead => (
+              {leads.map((lead) => (
                 <TableRow key={lead.id}>
-                  <TableCell>{lead.name}</TableCell>
+                  <TableCell>
+                    <Link href={`/features/leads/${lead.id}`}>{lead.name}</Link>
+                  </TableCell>
                   <TableCell>{lead.company}</TableCell>
                   <TableCell>{lead.status}</TableCell>
                   <TableCell>{lead.source}</TableCell>
