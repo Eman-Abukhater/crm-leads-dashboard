@@ -5,8 +5,12 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function AuthProvider({ children }) {
   return (
     <>
-      <ToastContainer />
-      {children}
+
+      <SessionProvider>
+        <ToastContainer position="top-right" autoClose={2000} />
+        {children}
+      </SessionProvider>
     </>
   );
+
 }
