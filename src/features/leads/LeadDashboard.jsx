@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useLeads } from "./hooks";
+import { useLeads } from '@/features/leads/hooks';
 import {
   Container,
   Typography,
