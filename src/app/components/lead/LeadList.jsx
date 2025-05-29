@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Box,
@@ -16,13 +16,37 @@ import {
   Select,
   MenuItem,
   Button,
-} from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
-import { useState, useEffect } from 'react';
-import { useLeads } from '@/features/leads/hooks';
+} from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import { useLeads } from "@/features/leads/hooks";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  assignLeads,
+  updateLeadsStatus,
+  deleteLeads,
+} from "@/features/leads/services";
 
 export default function LeadList() {
   const { data: fetchedLeads = [], isLoading } = useLeads();
+  // Importing the necessary services for lead operations
+
+  const queryClient = useQueryClient();
+
+  const assignMutation = useMutation({
+    mutationFn: assignLeads,
+    onSuccess: () => queryClient.invalidateQueries(["leads"]),
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: updateLeadsStatus,
+    onSuccess: () => queryClient.invalidateQueries(["leads"]),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteLeads,
+    onSuccess: () => queryClient.invalidateQueries(["leads"]),
+  });
 
   const [leads, setLeads] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -57,26 +81,17 @@ export default function LeadList() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
   const handleBulkAssign = (assignee) => {
-    const updated = leads.map((lead) =>
-      selected.includes(lead.id) ? { ...lead, assignedTo: assignee } : lead
-    );
-    setLeads(updated);
+    assignMutation.mutate({ ids: selected, assignee });
     setSelected([]);
   };
-
   const handleBulkUpdateStatus = (status) => {
-    const updated = leads.map((lead) =>
-      selected.includes(lead.id) ? { ...lead, status } : lead
-    );
-    setLeads(updated);
+    statusMutation.mutate({ ids: selected, status });
     setSelected([]);
   };
 
   const handleBulkDelete = () => {
-    const updated = leads.filter((lead) => !selected.includes(lead.id));
-    setLeads(updated);
+    deleteMutation.mutate({ ids: selected });
     setSelected([]);
   };
 
@@ -94,7 +109,7 @@ export default function LeadList() {
       </Typography>
 
       {selected.length > 0 && (
-        <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
+        <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
           <Typography>{selected.length} selected</Typography>
 
           <Select
