@@ -32,3 +32,10 @@ const dummyLeads = [
     );
     return Promise.resolve(leadsMock);
   }
+
+  export function updateLeadsStatus({ ids, status }) {
+    leadsMock = leadsMock.map((lead) =>
+      ids.includes(lead.id) ? { ...lead, status } : lead
+    );
+    return Promise.resolve(leadsMock);
+  }
