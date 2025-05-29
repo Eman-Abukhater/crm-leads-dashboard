@@ -17,10 +17,37 @@ let leadsMock = [
       source: "Referral",
       assignedTo: "manager@crm.com",
       priority: "Low",
+    }, 
+    {
+      id: 3,
+      name: "Charlie Brown",
+      company: "Innovate LLC",
+      status: "New",
+      source: "Email Campaign",
+      assignedTo: "rep@crm.com",
+      priority: "Medium",
     },
+    {
+      id: 4,
+      name: "Diana Prince",
+      company: "Global Corp.",
+      status: "Contacted",
+      source: "Social Media",
+      assignedTo: "manager@crm.com",
+      priority: "High",
+    },
+    {
+      id: 5,
+      name: "Ethan Hunt",
+      company: "Mission Tech",
+      status: "In Progress",
+      source: "Cold Call",
+      assignedTo: "rep@crm.com",
+      priority: "Low",
+    }
     
   ];
-  
+
   export async function fetchLeads() {
     return new Promise((resolve) => {
       setTimeout(() => resolve(leadsMock), 500); // simulating API delay
