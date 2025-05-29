@@ -26,4 +26,9 @@ const dummyLeads = [
       setTimeout(() => resolve(dummyLeads), 500); // simulating API delay
     });
   }
-  
+  export function assignLeads({ ids, assignee }) {
+    leadsMock = leadsMock.map((lead) =>
+      ids.includes(lead.id) ? { ...lead, assignedTo: assignee } : lead
+    );
+    return Promise.resolve(leadsMock);
+  }
