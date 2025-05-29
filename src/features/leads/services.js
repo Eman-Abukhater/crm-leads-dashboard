@@ -39,3 +39,8 @@ const dummyLeads = [
     );
     return Promise.resolve(leadsMock);
   }
+
+export function deleteLeads({ ids }) {
+  leadsMock = leadsMock.filter((lead) => !ids.includes(lead.id));
+  return Promise.resolve(leadsMock);
+}
