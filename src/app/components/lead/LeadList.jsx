@@ -29,6 +29,7 @@ import {
 import { useRouter } from "next/navigation";
 
 export default function LeadList({ leadsfilter }) {
+  const router = useRouter();
   // Importing the necessary services for lead operations
 
   const queryClient = useQueryClient();
