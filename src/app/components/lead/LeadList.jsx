@@ -27,8 +27,7 @@ import {
   deleteLeads,
 } from "@/features/leads/services";
 
-export default function LeadList({ leads }) {
-  const { data: fetchedLeads = [], isLoading } = useLeads();
+export default function LeadList({ leadsfilter }) {
   // Importing the necessary services for lead operations
 
   const queryClient = useQueryClient();
@@ -53,10 +52,12 @@ export default function LeadList({ leads }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Sync fetched leads to local state
+
+  // Initialize leads with the  filtered data
   useEffect(() => {
-    setLeads(fetchedLeads);
-  }, [fetchedLeads]);
+    setLeads(leadsfilter);
+  }, [leadsfilter]);
+  
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -100,7 +101,6 @@ export default function LeadList({ leads }) {
     page * rowsPerPage + rowsPerPage
   );
 
-  if (isLoading) return <Typography>Loading leads...</Typography>;
 
   return (
     <Box>

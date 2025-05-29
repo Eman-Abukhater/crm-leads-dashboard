@@ -125,7 +125,7 @@ export default function LeadDashboardPage() {
       </Box>
 
       {/* Lead Table */}     
-      <LeadList leads={filteredLeads} />
+      <LeadList leadsfilter={filteredLeads} />
     </Box>
   );
 }
