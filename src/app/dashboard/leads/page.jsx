@@ -1,5 +1,6 @@
 'use client';
 
+import LeadList from '@/app/components/lead/LeadList';
 import { useLeads } from '@/features/leads/hooks';
 import {
   Box,
@@ -128,33 +129,8 @@ export default function LeadDashboardPage() {
         </FormControl>
       </Box>
 
-      {/* Lead Table */}
-      <Paper>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Company</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Source</TableCell>
-              <TableCell>Assigned To</TableCell>
-              <TableCell>Priority</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredLeads.map((lead) => (
-              <TableRow key={lead.id}>
-                <TableCell>{lead.name}</TableCell>
-                <TableCell>{lead.company}</TableCell>
-                <TableCell>{lead.status}</TableCell>
-                <TableCell>{lead.source}</TableCell>
-                <TableCell>{lead.assignedTo}</TableCell>
-                <TableCell>{lead.priority}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
+      {/* Lead Table */}     
+      <LeadList />
     </Box>
   );
 }
