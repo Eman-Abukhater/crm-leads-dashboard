@@ -27,7 +27,7 @@ import {
   deleteLeads,
 } from "@/features/leads/services";
 
-export default function LeadList() {
+export default function LeadList({ leads }) {
   const { data: fetchedLeads = [], isLoading } = useLeads();
   // Importing the necessary services for lead operations
 

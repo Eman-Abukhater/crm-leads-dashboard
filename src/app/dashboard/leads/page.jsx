@@ -12,11 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
 } from '@mui/material';
 import { useState, useMemo } from 'react';
 
@@ -130,7 +125,7 @@ export default function LeadDashboardPage() {
       </Box>
 
       {/* Lead Table */}     
-      <LeadList />
+      <LeadList leads={filteredLeads} />
     </Box>
   );
 }
