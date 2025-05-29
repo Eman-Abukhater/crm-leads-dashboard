@@ -16,10 +16,10 @@ import {
   Select,
   MenuItem,
   Button,
+  
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Info } from "@mui/icons-material";
 import { useState, useEffect } from "react";
-import { useLeads } from "@/features/leads/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   assignLeads,
@@ -52,12 +52,10 @@ export default function LeadList({ leadsfilter }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-
   // Initialize leads with the  filtered data
   useEffect(() => {
     setLeads(leadsfilter);
   }, [leadsfilter]);
-  
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -100,7 +98,6 @@ export default function LeadList({ leadsfilter }) {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
 
   return (
     <Box>
@@ -190,6 +187,14 @@ export default function LeadList({ leadsfilter }) {
                   <TableCell>
                     <IconButton size="small" color="primary">
                       <Edit />
+                    </IconButton>
+                    {/*Add Details Button */}
+                    <IconButton
+                      size="small"
+                      color="info"
+                      onClick={() => router.push(`/leads/${lead.id}`)}
+                    >
+                      <Info /> 
                     </IconButton>
                   </TableCell>
                 </TableRow>
