@@ -191,9 +191,6 @@ export default function LeadList({ leadsfilter }) {
                     <IconButton size="small" color="primary">
                       <Edit />
                     </IconButton>
-                    <IconButton size="small" color="error">
-                      <Delete />
-                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
