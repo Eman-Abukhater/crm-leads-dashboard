@@ -1,5 +1,5 @@
 
-const dummyLeads = [
+let leadsMock = [
     {
       id: 1,
       name: "Alice Johnson",
@@ -23,7 +23,7 @@ const dummyLeads = [
   
   export async function fetchLeads() {
     return new Promise((resolve) => {
-      setTimeout(() => resolve(dummyLeads), 500); // simulating API delay
+      setTimeout(() => resolve(leadsMock), 500); // simulating API delay
     });
   }
   export function assignLeads({ ids, assignee }) {
