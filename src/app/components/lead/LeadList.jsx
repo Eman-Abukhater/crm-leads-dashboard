@@ -26,6 +26,8 @@ import {
   deleteLeads,
 } from "@/features/leads/services";
 import { useRouter } from "next/navigation";
+import LeadFormModal from "./LeadFormModal"; // Importing the modal component for adding/editing leads
+import { toast } from "react-toastify";
 
 export default function LeadList({ leadsfilter }) {
   const router = useRouter();
@@ -103,6 +105,25 @@ export default function LeadList({ leadsfilter }) {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  // Modal for adding/editing leads
+  const dropdownOptions = {
+    sources: ["Website", "LinkedIn", "Referral"],
+    staff: ["rep@crm.com", "manager@crm.com"],
+    statuses: ["New", "In Progress", "Converted", "Lost"],
+    priorities: ["Low", "Medium", "High"],
+  };
+
+  const handleAddSubmit = (data) => {
+    toast.success("The lead Added successful! 🎉");
+    console.log("Add lead:", data);
+    setAddModalOpen(false);
+  };
+
+  const handleEditSubmit = (data) => {
+    console.log("Edit lead:", data);
+    toast.success("The lead Updated successful! 🎉");
+    setEditModal({ open: false, lead: null });
+  };
 
   return (
     <Box>
@@ -228,6 +249,23 @@ export default function LeadList({ leadsfilter }) {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Modal for adding and editing leads */}
+
+        <LeadFormModal
+          open={addModalOpen}
+          onClose={() => setAddModalOpen(false)}
+          onSubmit={handleAddSubmit}
+          dropdownOptions={dropdownOptions}
+        />
+
+        <LeadFormModal
+          open={editModal.open}
+          onClose={() => setEditModal({ open: false, lead: null })}
+          onSubmit={handleEditSubmit}
+          lead={editModal.lead}
+          dropdownOptions={dropdownOptions}
+        />
 
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
