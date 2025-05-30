@@ -206,9 +206,14 @@ export default function LeadList({ leadsfilter }) {
                   <TableCell>{lead.priority}</TableCell>
                   <TableCell>{lead.assignedTo}</TableCell>
                   <TableCell>
-                    <IconButton size="small" color="primary">
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={() => setEditModal({ open: true, lead })}
+                    >
                       <Edit />
                     </IconButton>
+
                     {/*Add Details Button */}
                     <IconButton
                       size="small"
