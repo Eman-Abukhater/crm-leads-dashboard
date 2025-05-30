@@ -20,13 +20,7 @@ import {
 import { Edit, Info } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  assignLeads,
-  updateLeadsStatus,
-  deleteLeads,
-  addLead,
-  editLead,
-} from "@/features/leads/services";
+import { deleteLeads, addLead, editLead } from "@/features/leads/services";
 import { useRouter } from "next/navigation";
 import LeadFormModal from "./LeadFormModal"; // Importing the modal component for adding/editing leads
 import { toast } from "react-toastify";
@@ -40,17 +34,6 @@ export default function LeadList({ leadsfilter }) {
   // Importing the necessary services for lead operations
 
   const queryClient = useQueryClient();
-
-  const assignMutation = useMutation({
-    mutationFn: assignLeads,
-    onSuccess: () => queryClient.invalidateQueries(["leads"]),
-  });
-
-  const statusMutation = useMutation({
-    mutationFn: updateLeadsStatus,
-    onSuccess: () => queryClient.invalidateQueries(["leads"]),
-  });
-
   const deleteMutation = useMutation({
     mutationFn: deleteLeads,
     onSuccess: () => queryClient.invalidateQueries(["leads"]),
@@ -63,7 +46,7 @@ export default function LeadList({ leadsfilter }) {
       toast.success("The lead was added successfully! 🎉");
     },
   });
-  
+
   const editLeadMutation = useMutation({
     mutationFn: editLead,
     onSuccess: () => {
@@ -71,7 +54,6 @@ export default function LeadList({ leadsfilter }) {
       toast.success("The lead was updated successfully! 🎉");
     },
   });
-  
 
   const [leads, setLeads] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -126,7 +108,16 @@ export default function LeadList({ leadsfilter }) {
   );
   // Modal for adding/editing leads
   const dropdownOptions = {
-    sources: ["Website", "LinkedIn", "Referral","Email Campaign", "Social Media" , "Event","Cold Call", "Other"],
+    sources: [
+      "Website",
+      "LinkedIn",
+      "Referral",
+      "Email Campaign",
+      "Social Media",
+      "Event",
+      "Cold Call",
+      "Other",
+    ],
     staff: ["rep@crm.com", "manager@crm.com"],
     statuses: ["New", "In Progress", "Converted", "Lost"],
     priorities: ["Low", "Medium", "High"],
@@ -136,12 +127,11 @@ export default function LeadList({ leadsfilter }) {
     addLeadMutation.mutate(data);
     setAddModalOpen(false);
   };
-  
+
   const handleEditSubmit = (data) => {
     editLeadMutation.mutate(data);
     setEditModal({ open: false, lead: null });
   };
-  
 
   return (
     <Box>
@@ -164,34 +154,6 @@ export default function LeadList({ leadsfilter }) {
       {selected.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
           <Typography>{selected.length} selected</Typography>
-
-          <Select
-            size="small"
-            displayEmpty
-            value=""
-            onChange={(e) => handleBulkAssign(e.target.value)}
-          >
-            <MenuItem value="" disabled>
-              Assign to...
-            </MenuItem>
-            <MenuItem value="rep@crm.com">rep@crm.com</MenuItem>
-            <MenuItem value="manager@crm.com">manager@crm.com</MenuItem>
-          </Select>
-
-          <Select
-            size="small"
-            displayEmpty
-            value=""
-            onChange={(e) => handleBulkUpdateStatus(e.target.value)}
-          >
-            <MenuItem value="" disabled>
-              Set Status...
-            </MenuItem>
-            <MenuItem value="In Progress">In Progress</MenuItem>
-            <MenuItem value="Converted">Converted</MenuItem>
-            <MenuItem value="Lost">Lost</MenuItem>
-          </Select>
-
           <Button
             size="small"
             color="error"
