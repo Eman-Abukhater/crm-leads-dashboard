@@ -29,6 +29,10 @@ import { useRouter } from "next/navigation";
 
 export default function LeadList({ leadsfilter }) {
   const router = useRouter();
+  // State management for modal visibility and lead editing
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModal, setEditModal] = useState({ open: false, lead: null });
+
   // Importing the necessary services for lead operations
 
   const queryClient = useQueryClient();
