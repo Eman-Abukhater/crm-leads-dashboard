@@ -6,6 +6,7 @@ import {
   Tabs,
   Tab,
   Paper,
+  Divider,
 } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -16,27 +17,65 @@ export default function LeadDetailsPage() {
 
   const handleChange = (_, newValue) => setTab(newValue);
 
+  const tabLabels = [
+    "Activity Timeline",
+    "Notes",
+    "Attachments",
+    "Contact Info",
+    "Interaction Log",
+  ];
+
   return (
-    <Box p={3}>
-      <Typography variant="h5" gutterBottom>
-        Lead Details - ID: {id}
+    <Box sx={{ p: 4, maxWidth: "1000px", mx: "auto" }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
+        Lead Details
+      </Typography>
+      <Typography variant="subtitle1" color="text.secondary">
+        Viewing details for Lead ID: <strong>{id}</strong>
       </Typography>
 
-      <Paper sx={{ mt: 2 }}>
-        <Tabs value={tab} onChange={handleChange} centered>
-          <Tab label="Activity Timeline" />
-          <Tab label="Notes" />
-          <Tab label="Attachments" />
-          <Tab label="Contact Info" />
-          <Tab label="Interaction Log" />
+      <Paper
+        elevation={3}
+        sx={{ mt: 4, borderRadius: 3, overflow: "hidden", backgroundColor: "#f9f9f9" }}
+      >
+        <Tabs
+          value={tab}
+          onChange={handleChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          textColor="primary"
+          indicatorColor="primary"
+          sx={{
+            backgroundColor: "white",
+            px: 2,
+            borderBottom: "1px solid #ddd",
+          }}
+        >
+          {tabLabels.map((label, index) => (
+            <Tab
+              key={index}
+              label={label}
+              sx={{ textTransform: "none", fontWeight: 500, fontSize: "16px" }}
+            />
+          ))}
         </Tabs>
 
-        <Box p={2}>
-          {tab === 0 && <div>Activity timeline content here</div>}
-          {tab === 1 && <div>Notes section</div>}
-          {tab === 2 && <div>Attachments area</div>}
-          {tab === 3 && <div>Contact info display</div>}
-          {tab === 4 && <div>Calls, meetings, follow-ups here</div>}
+        <Box sx={{ p: 3, minHeight: "300px" }}>
+          {tab === 0 && (
+            <Typography variant="body1">Activity timeline content goes here...</Typography>
+          )}
+          {tab === 1 && (
+            <Typography variant="body1">Notes and comments for the lead...</Typography>
+          )}
+          {tab === 2 && (
+            <Typography variant="body1">Upload and view lead-related attachments...</Typography>
+          )}
+          {tab === 3 && (
+            <Typography variant="body1">Display contact information...</Typography>
+          )}
+          {tab === 4 && (
+            <Typography variant="body1">List of calls, meetings, and follow-ups...</Typography>
+          )}
         </Box>
       </Paper>
     </Box>
