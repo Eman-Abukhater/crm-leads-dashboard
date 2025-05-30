@@ -95,5 +95,5 @@ export function editLead(updatedLead) {
   leadsMock = leadsMock.map((lead) =>
     lead.id === updatedLead.id ? { ...lead, ...updatedLead } : lead
   );
-  return Promise.resolve(updatedLead);
+  return Promise.resolve(leadsMock);
 }
