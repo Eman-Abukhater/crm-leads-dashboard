@@ -18,7 +18,6 @@ import { useEffect } from "react";
 const leadSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
-  phone: z.string().min(1, "Phone is required"),
   company: z.string().min(1, "Company is required"),
   source: z.string().min(1, "Source is required"),
   assignedTo: z.string().min(1, "Assigned Staff is required"),
@@ -62,6 +61,7 @@ export default function LeadFormModal({
               <TextField
                 fullWidth
                 label="Name"
+                value={lead?.name || ""}
                 {...register("name")}
                 error={!!errors.name}
                 helperText={errors.name?.message}
@@ -70,6 +70,7 @@ export default function LeadFormModal({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
+                value={lead?.email || ""}
                 label="Email"
                 {...register("email")}
                 error={!!errors.email}
@@ -80,6 +81,7 @@ export default function LeadFormModal({
               <TextField
                 fullWidth
                 label="Phone"
+                value={lead?.phone || ""}
                 {...register("phone")}
                 error={!!errors.phone}
                 helperText={errors.phone?.message}
@@ -88,6 +90,7 @@ export default function LeadFormModal({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
+                value={lead?.company || ""}
                 label="Company"
                 {...register("company")}
                 error={!!errors.company}
@@ -99,6 +102,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Source"
+                value={lead?.source || ""}
                 {...register("source")}
                 error={!!errors.source}
                 helperText={errors.source?.message}
@@ -113,6 +117,7 @@ export default function LeadFormModal({
             <Grid item xs={12} sm={6}>
               <TextField
                 select
+                value={lead?.assignedTo || ""}
                 fullWidth
                 label="Assigned Staff"
                 {...register("assignedTo")}
@@ -129,6 +134,7 @@ export default function LeadFormModal({
             <Grid item xs={12} sm={6}>
               <TextField
                 select
+                value={lead?.status || ""}
                 fullWidth
                 label="Status"
                 {...register("status")}
@@ -147,6 +153,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Priority"
+                value={lead?.priority || ""}
                 {...register("priority")}
                 error={!!errors.priority}
                 helperText={errors.priority?.message}
