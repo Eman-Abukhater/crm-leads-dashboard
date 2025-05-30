@@ -16,7 +16,6 @@ import {
   Select,
   MenuItem,
   Button,
-  
 } from "@mui/material";
 import { Edit, Info } from "@mui/icons-material";
 import { useState, useEffect } from "react";
@@ -103,9 +102,21 @@ export default function LeadList({ leadsfilter }) {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Leads
-      </Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography variant="h6">Leads</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setAddModalOpen(true)}
+        >
+          Add Lead
+        </Button>
+      </Box>
 
       {selected.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
@@ -200,7 +211,7 @@ export default function LeadList({ leadsfilter }) {
                       color="info"
                       onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
                     >
-                      <Info /> 
+                      <Info />
                     </IconButton>
                   </TableCell>
                 </TableRow>
