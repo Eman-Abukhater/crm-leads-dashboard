@@ -194,7 +194,7 @@ export default function LeadList({ leadsfilter }) {
                     <IconButton
                       size="small"
                       color="info"
-                      onClick={() => router.push(`/leads/${lead.id}`)}
+                      onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
                     >
                       <Info /> 
                     </IconButton>
