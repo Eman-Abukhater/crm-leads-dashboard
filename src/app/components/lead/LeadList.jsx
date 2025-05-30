@@ -164,9 +164,11 @@ export default function LeadList({ leadsfilter }) {
                   />
                 </TableCell>
                 <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
                 <TableCell>Company</TableCell>
                 <TableCell>Source</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Priority</TableCell>
                 <TableCell>Assigned To</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -182,9 +184,11 @@ export default function LeadList({ leadsfilter }) {
                     />
                   </TableCell>
                   <TableCell>{lead.name}</TableCell>
+                  <TableCell>{lead.email}</TableCell>
                   <TableCell>{lead.company}</TableCell>
                   <TableCell>{lead.source}</TableCell>
                   <TableCell>{lead.status}</TableCell>
+                  <TableCell>{lead.priority}</TableCell>
                   <TableCell>{lead.assignedTo}</TableCell>
                   <TableCell>
                     <IconButton size="small" color="primary">
