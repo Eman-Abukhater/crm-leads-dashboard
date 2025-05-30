@@ -77,12 +77,18 @@ export function deleteLeads({ ids }) {
 }
 
 
-let nextId = 6; // Start from 6 since we have 5 initial leads
+// let nextId = 6; // Start from 6 since we have 5 initial leads
+
+// export function addLead(newLead) {
+//   const leadToAdd = { id: nextId++, ...newLead };
+//   leadsMock.push(leadToAdd);
+//   return Promise.resolve(leadToAdd);
+// }
 
 export function addLead(newLead) {
-  const leadToAdd = { id: nextId++, ...newLead };
-  leadsMock.push(leadToAdd);
-  return Promise.resolve(leadToAdd);
+  const newId = Math.max(...leadsMock.map((l) => l.id)) + 1;
+  leadsMock.push({ ...newLead, id: newId });
+  return Promise.resolve(leadsMock);
 }
 
 export function editLead(updatedLead) {
