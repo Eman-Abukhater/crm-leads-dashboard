@@ -107,7 +107,7 @@ export default function LeadList({ leadsfilter }) {
   );
   // Modal for adding/editing leads
   const dropdownOptions = {
-    sources: ["Website", "LinkedIn", "Referral"],
+    sources: ["Website", "LinkedIn", "Referral","Email Campaign", "Social Media" , "Event","Cold Call", "Other"],
     staff: ["rep@crm.com", "manager@crm.com"],
     statuses: ["New", "In Progress", "Converted", "Lost"],
     priorities: ["Low", "Medium", "High"],
