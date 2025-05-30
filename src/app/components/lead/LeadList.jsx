@@ -24,6 +24,8 @@ import {
   assignLeads,
   updateLeadsStatus,
   deleteLeads,
+  addLead,
+  editLead,
 } from "@/features/leads/services";
 import { useRouter } from "next/navigation";
 import LeadFormModal from "./LeadFormModal"; // Importing the modal component for adding/editing leads
@@ -53,6 +55,23 @@ export default function LeadList({ leadsfilter }) {
     mutationFn: deleteLeads,
     onSuccess: () => queryClient.invalidateQueries(["leads"]),
   });
+
+  const addLeadMutation = useMutation({
+    mutationFn: addLead,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["leads"]);
+      toast.success("The lead was added successfully! 🎉");
+    },
+  });
+  
+  const editLeadMutation = useMutation({
+    mutationFn: editLead,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["leads"]);
+      toast.success("The lead was updated successfully! 🎉");
+    },
+  });
+  
 
   const [leads, setLeads] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -114,16 +133,15 @@ export default function LeadList({ leadsfilter }) {
   };
 
   const handleAddSubmit = (data) => {
-    toast.success("The lead Added successful! 🎉");
-    console.log("Add lead:", data);
+    addLeadMutation.mutate(data);
     setAddModalOpen(false);
   };
-
+  
   const handleEditSubmit = (data) => {
-    console.log("Edit lead:", data);
-    toast.success("The lead Updated successful! 🎉");
+    editLeadMutation.mutate(data);
     setEditModal({ open: false, lead: null });
   };
+  
 
   return (
     <Box>
