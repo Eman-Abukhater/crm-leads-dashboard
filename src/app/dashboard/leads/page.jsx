@@ -77,6 +77,32 @@ export default function LeadDashboardPage() {
   if (isError)
     return <Typography color="error">Error loading leads</Typography>;
 
+
+  // Chart data for lead status distribution
+  const chartData = {
+    labels: ['Converted', 'In Progress', 'Lost'],
+    datasets: [
+      {
+        label: 'Leads Status',
+        data: [leadStats.converted, leadStats.inProgress, leadStats.lost],
+        backgroundColor: ['#4caf50', '#2196f3', '#f44336'], // green, blue, red
+      },
+    ],
+  };
+  
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Leads Status Overview',
+      },
+    },
+  };
+  
   return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>
