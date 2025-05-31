@@ -24,13 +24,13 @@ import { deleteLeads, addLead, editLead } from "@/features/leads/services";
 import { useRouter } from "next/navigation";
 import LeadFormModal from "./LeadFormModal"; // Importing the modal component for adding/editing leads
 import { toast } from "react-toastify";
-
+import { useLeads } from "@/features/leads/hooks"; // Custom hook to fetch leads
 export default function LeadList({ leadsfilter }) {
   const router = useRouter();
+  const leads = leadsfilter || [];
   // State management for modal visibility and lead editing
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModal, setEditModal] = useState({ open: false, lead: null });
-
   // Importing the necessary services for lead operations
 
   const queryClient = useQueryClient();
@@ -50,21 +50,23 @@ export default function LeadList({ leadsfilter }) {
   const editLeadMutation = useMutation({
     mutationFn: editLead,
     onSuccess: () => {
-      queryClient.invalidateQueries(["leads"]);
+      queryClient.invalidateQueries(["leads"]); // Re-fetch updated leads
       toast.success("The lead was updated successfully! 🎉");
     },
   });
-
-  const [leads, setLeads] = useState([]);
+  
+  const [localLeads, setLocalLeads] = useState([]);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Initialize leads with the  filtered data
   useEffect(() => {
-    setLeads(leadsfilter);
+    setLocalLeads(leadsfilter || []);
+    setSelected([]);
     setPage(0);
   }, [leadsfilter]);
+  
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -95,7 +97,7 @@ export default function LeadList({ leadsfilter }) {
     setSelected([]);
   };
 
-  const paginatedLeads = leads.slice(
+  const paginatedLeads = localLeads.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -121,7 +123,7 @@ export default function LeadList({ leadsfilter }) {
     setAddModalOpen(false);
   };
 
-  const handleEditSubmit = (data) => {
+  const handleEditSubmit = (data) => {  
     editLeadMutation.mutate(data);
     setEditModal({ open: false, lead: null });
   };
@@ -165,9 +167,9 @@ export default function LeadList({ leadsfilter }) {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selected.length === leads.length}
+                    checked={selected.length === localLeads.length}
                     indeterminate={
-                      selected.length > 0 && selected.length < leads.length
+                      selected.length > 0 && selected.length < localLeads.length
                     }
                     onChange={handleSelectAllClick}
                   />

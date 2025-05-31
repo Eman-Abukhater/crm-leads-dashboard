@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import LeadList from '@/app/components/lead/LeadList';
 import { useLeads } from '@/features/leads/hooks';
@@ -119,12 +119,12 @@ export default function LeadDashboardPage() {
             <MenuItem value="">All</MenuItem>
             <MenuItem value="Website">Website</MenuItem>
             <MenuItem value="Referral">Referral</MenuItem>
-            <MenuItem value="Email">Email</MenuItem>
+            <MenuItem value="Email Campaign">Email Campaign</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {/* Lead Table */}     
+      {/* Lead Table */}
       <LeadList leadsfilter={filteredLeads} />
     </Box>
   );

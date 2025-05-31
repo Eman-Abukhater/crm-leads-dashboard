@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchLeads } from './services';
-import { editLead } from './services';
 
 export function useLeads() {
   return useQuery({
@@ -9,14 +8,3 @@ export function useLeads() {
   });
 }
 
-export function useEditLead() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: editLead,
-    onSuccess: () => {
-      // Refetch the leads after successful edit
-      queryClient.invalidateQueries(['leads']);
-    },
-  });
-}

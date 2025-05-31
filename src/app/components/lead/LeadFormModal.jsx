@@ -39,17 +39,31 @@ export default function LeadFormModal({
     formState: { errors },
   } = useForm({
     resolver: zodResolver(leadSchema),
-    defaultValues: lead || {},
   });
 
   useEffect(() => {
-    reset(lead || {});
+    reset({
+      name: lead?.name || "",
+      email: lead?.email || "",
+      phone: lead?.phone || "",
+      company: lead?.company || "",
+      source: lead?.source || "",
+      assignedTo: lead?.assignedTo || "",
+      status: lead?.status || "",
+      priority: lead?.priority || "",
+    });
   }, [lead, reset]);
 
   const handleFormSubmit = (data) => {
-    onSubmit(data);
+    if (lead?.id) {
+      // Include the lead id when editing
+      onSubmit({ id: lead.id, ...data });
+    } else {
+      onSubmit(data);
+    }
     reset();
   };
+  
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -78,15 +92,6 @@ export default function LeadFormModal({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Phone"
-                {...register("phone")}
-                error={!!errors.phone}
-                helperText={errors.phone?.message}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
                 label="Company"
                 {...register("company")}
                 error={!!errors.company}
@@ -98,6 +103,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Source"
+                defaultValue={lead?.source || ""}
                 {...register("source")}
                 error={!!errors.source}
                 helperText={errors.source?.message}
@@ -114,6 +120,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Assigned Staff"
+                defaultValue={lead?.assignedTo || ""}
                 {...register("assignedTo")}
                 error={!!errors.assignedTo}
                 helperText={errors.assignedTo?.message}
@@ -130,6 +137,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Status"
+                defaultValue={lead?.status || ""}
                 {...register("status")}
                 error={!!errors.status}
                 helperText={errors.status?.message}
@@ -146,6 +154,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Priority"
+                defaultValue={lead?.priority || ""}
                 {...register("priority")}
                 error={!!errors.priority}
                 helperText={errors.priority?.message}
