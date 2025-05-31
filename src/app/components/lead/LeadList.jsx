@@ -133,9 +133,14 @@ export default function LeadList({ leadsfilter }) {
   const [editModal, setEditModal] = useState({ open: false, lead: null });
 
   const handleAddSubmit = (data) => {
-    addLeadMutation.mutate(data);
-    setAddModalOpen(false);
+    if (userRole === "admin" || userRole === "manager") {
+      addLeadMutation.mutate(data);
+      setAddModalOpen(false);
+    } else {
+      toast.error("You are not authorized to add leads.");
+    }
   };
+  
 
   const handleEditSubmit = (data) => {
     editLeadMutation.mutate(data);
