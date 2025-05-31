@@ -20,7 +20,7 @@ import {
 import { Edit, Info } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteLeads, addLead, editLead } from "@/features/leads/services";
+import { deleteLeads, addLead, editLead ,assignLeads} from "@/features/leads/services";
 import { useRouter } from "next/navigation";
 import LeadFormModal from "./LeadFormModal"; // Importing the modal component for adding/editing leads
 import { toast } from "react-toastify";
@@ -46,7 +46,10 @@ export default function LeadList({ leadsfilter }) {
       toast.success("The lead was added successfully! 🎉");
     },
   });
-
+  const assignMutation = useMutation({
+    mutationFn: assignLeads,
+    onSuccess: () => queryClient.invalidateQueries(["leads"]),
+  });
   const editLeadMutation = useMutation({
     mutationFn: editLead,
     onSuccess: () => {
@@ -127,6 +130,10 @@ export default function LeadList({ leadsfilter }) {
     editLeadMutation.mutate(data);
     setEditModal({ open: false, lead: null });
   };
+  const handleBulkAssign = (assignee) => {
+    assignMutation.mutate({ ids: selected, assignee });
+    setSelected([]);
+  };
 
   return (
     <Box>
@@ -149,6 +156,18 @@ export default function LeadList({ leadsfilter }) {
       {selected.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
           <Typography>{selected.length} selected</Typography>
+          <Select
+            size="small"
+            displayEmpty
+            value=""
+            onChange={(e) => handleBulkAssign(e.target.value)}
+          >
+            <MenuItem value="" disabled>
+              Assign to...
+            </MenuItem>
+            <MenuItem value="rep@crm.com">rep@crm.com</MenuItem>
+            <MenuItem value="manager@crm.com">manager@crm.com</MenuItem>
+          </Select>
           <Button
             size="small"
             color="error"
