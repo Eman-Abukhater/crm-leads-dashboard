@@ -20,11 +20,16 @@ import {
 import { Edit, Info } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteLeads, addLead, editLead, assignLeads } from "@/features/leads/services";
+import {
+  deleteLeads,
+  addLead,
+  editLead,
+  assignLeads,
+} from "@/features/leads/services";
 import { useRouter } from "next/navigation";
 import LeadFormModal from "./LeadFormModal";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";  // <-- import useSession
+import { useSession } from "next-auth/react"; // <-- import useSession
 
 export default function LeadList({ leadsfilter }) {
   const router = useRouter();
@@ -140,7 +145,6 @@ export default function LeadList({ leadsfilter }) {
       toast.error("You are not authorized to add leads.");
     }
   };
-  
 
   const handleEditSubmit = (data) => {
     editLeadMutation.mutate(data);
@@ -149,38 +153,59 @@ export default function LeadList({ leadsfilter }) {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
         <Typography variant="h6">Leads</Typography>
 
         {/* Add Lead button only for admin and manager */}
         {(userRole === "admin" || userRole === "manager") && (
-          <Button variant="contained" color="primary" onClick={() => setAddModalOpen(true)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setAddModalOpen(true)}
+          >
             Add Lead
           </Button>
         )}
       </Box>
 
       {/* Bulk actions only for admin and manager */}
-      {(userRole === "admin" || userRole === "manager") && selected.length > 0 && (
-        <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
-          <Typography>{selected.length} selected</Typography>
-          <Select
-            size="small"
-            displayEmpty
-            value=""
-            onChange={(e) => handleBulkAssign(e.target.value)}
-          >
-            <MenuItem value="" disabled>
-              Assign to...
-            </MenuItem>
-            <MenuItem value="rep@crm.com">rep@crm.com</MenuItem>
-            <MenuItem value="manager@crm.com">manager@crm.com</MenuItem>
-          </Select>
-          <Button size="small" color="error" variant="outlined" onClick={handleBulkDelete}>
-            Delete Selected
-          </Button>
-        </Box>
-      )}
+      {(userRole === "admin" || userRole === "manager") &&
+        selected.length > 0 && (
+          <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
+            <Typography>{selected.length} selected</Typography>
+
+            {/* Assign dropdown shown to both admin and manager */}
+            <Select
+              size="small"
+              displayEmpty
+              value=""
+              onChange={(e) => handleBulkAssign(e.target.value)}
+            >
+              <MenuItem value="" disabled>
+                Assign to...
+              </MenuItem>
+              <MenuItem value="rep@crm.com">rep@crm.com</MenuItem>
+              <MenuItem value="manager@crm.com">manager@crm.com</MenuItem>
+            </Select>
+
+            {/* Delete button shown only to admin */}
+            {userRole === "admin" && (
+              <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={handleBulkDelete}
+              >
+                Delete Selected
+              </Button>
+            )}
+          </Box>
+        )}
 
       <Paper>
         <TableContainer>
@@ -190,8 +215,14 @@ export default function LeadList({ leadsfilter }) {
                 {(userRole === "admin" || userRole === "manager") && (
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selected.length === localLeads.length && localLeads.length > 0}
-                      indeterminate={selected.length > 0 && selected.length < localLeads.length}
+                      checked={
+                        selected.length === localLeads.length &&
+                        localLeads.length > 0
+                      }
+                      indeterminate={
+                        selected.length > 0 &&
+                        selected.length < localLeads.length
+                      }
                       onChange={handleSelectAllClick}
                     />
                   </TableCell>
@@ -227,7 +258,10 @@ export default function LeadList({ leadsfilter }) {
                   <TableCell>{lead.assignedTo}</TableCell>
                   <TableCell>
                     {/* Edit button only for admin and manager */}
-                    {(userRole === "admin" || userRole === "manager" || (userRole === "rep" && lead.assignedTo === userEmail)) && (
+                    {(userRole === "admin" ||
+                      userRole === "manager" ||
+                      (userRole === "rep" &&
+                        lead.assignedTo === userEmail)) && (
                       <IconButton
                         size="small"
                         color="primary"
