@@ -13,7 +13,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { Bar } from 'react-chartjs-2';
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,9 +22,16 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
@@ -40,21 +47,21 @@ export default function LeadDashboardPage() {
 
   const filteredLeads = useMemo(() => {
     let visibleLeads = leads;
-  
+
     // If user is a sales-rep, only show leads assigned to them
-    if (userRole === 'sales-rep') {
+    if (userRole === "sales-rep") {
       visibleLeads = leads.filter((lead) => lead.assignedTo === userEmail);
     }
-  
+
     return visibleLeads.filter((lead) => {
       return (
-        (statusFilter === '' || lead.status === statusFilter) &&
-        (priorityFilter === '' || lead.priority === priorityFilter) &&
-        (sourceFilter === '' || lead.source === sourceFilter)
+        (statusFilter === "" || lead.status === statusFilter) &&
+        (priorityFilter === "" || lead.priority === priorityFilter) &&
+        (sourceFilter === "" || lead.source === sourceFilter)
       );
     });
   }, [leads, statusFilter, priorityFilter, sourceFilter, userRole, userEmail]);
-  
+
   const leadStats = useMemo(() => {
     const stats = { total: leads.length, converted: 0, lost: 0, inProgress: 0 };
     leads.forEach((lead) => {
@@ -72,37 +79,35 @@ export default function LeadDashboardPage() {
     return null;
   }
 
-
   if (isLoading) return <CircularProgress />;
   if (isError)
     return <Typography color="error">Error loading leads</Typography>;
 
-
   // Chart data for lead status distribution
   const chartData = {
-    labels: ['Converted', 'In Progress', 'Lost'],
+    labels: ["Converted", "In Progress", "Lost"],
     datasets: [
       {
-        label: 'Leads Status',
+        label: "Leads Status",
         data: [leadStats.converted, leadStats.inProgress, leadStats.lost],
-        backgroundColor: ['#4caf50', '#2196f3', '#f44336'], // green, blue, red
+        backgroundColor: ["#4caf50", "#2196f3", "#f44336"], // green, blue, red
       },
     ],
   };
-  
+
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       title: {
         display: true,
-        text: 'Leads Status Overview',
+        text: "Leads Status Overview",
       },
     },
   };
-  
+
   return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>
@@ -136,6 +141,13 @@ export default function LeadDashboardPage() {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Chart Section */}
+      <Box sx={{ mt: 4, maxWidth: 600 }}>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Bar data={chartData} options={chartOptions} />
+        </Paper>
+      </Box>
 
       {/* Filters */}
       <Box display="flex" gap={2} sx={{ mb: 3 }}>
