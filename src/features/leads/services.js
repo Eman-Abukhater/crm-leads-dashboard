@@ -64,6 +64,7 @@ export function deleteLeads({ ids }) {
 }
 
 
+
 // let nextId = 6; // Start from 6 since we have 5 initial leads
 
 // export function addLead(newLead) {
@@ -84,3 +85,11 @@ export function editLead(updatedLead) {
   return Promise.resolve(leadsMock);
 }
 
+
+
+export function assignLeads({ ids, assignee }) {
+  leadsMock = leadsMock.map((lead) =>
+    ids.includes(lead.id) ? { ...lead, assignedTo: assignee } : lead
+  );
+  return Promise.resolve(leadsMock);
+}
