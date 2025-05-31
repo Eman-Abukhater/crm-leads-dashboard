@@ -63,6 +63,7 @@ export default function LeadList({ leadsfilter }) {
   // Initialize leads with the  filtered data
   useEffect(() => {
     setLeads(leadsfilter);
+    setPage(0);
   }, [leadsfilter]);
 
   const handleSelectAllClick = (event) => {
@@ -88,15 +89,7 @@ export default function LeadList({ leadsfilter }) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleBulkAssign = (assignee) => {
-    assignMutation.mutate({ ids: selected, assignee });
-    setSelected([]);
-  };
-  const handleBulkUpdateStatus = (status) => {
-    statusMutation.mutate({ ids: selected, status });
-    setSelected([]);
-  };
-
+ 
   const handleBulkDelete = () => {
     deleteMutation.mutate({ ids: selected });
     setSelected([]);
