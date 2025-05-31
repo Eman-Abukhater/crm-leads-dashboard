@@ -68,7 +68,7 @@ export default function LeadFormModal({
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "unsigned_preset"); // 🟡 Use your unsigned preset
+    formData.append("upload_preset", "unsigned_preset"); // 
 
     try {
       const response = await fetch(
@@ -80,7 +80,7 @@ export default function LeadFormModal({
       );
 
       const data = await response.json();
-      setValue("imageUrl", data.secure_url); // 🟡 Save URL in form
+      setValue("imageUrl", data.secure_url); // Save URL in form
       setPreviewUrl(data.secure_url);
     } catch (err) {
       console.error("Upload failed", err);
