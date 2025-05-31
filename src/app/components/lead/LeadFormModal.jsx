@@ -23,7 +23,7 @@ const leadSchema = z.object({
   assignedTo: z.string().min(1, "Assigned Staff is required"),
   status: z.string().min(1, "Status is required"),
   priority: z.string().min(1, "Priority is required"),
-  profilePhoto: z.string().optional(),
+  imageUrl: z.string().optional(), // 🟡 Optional image field
 });
 
 export default function LeadFormModal({
@@ -37,15 +37,14 @@ export default function LeadFormModal({
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(leadSchema),
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
-  const [uploadedUrl, setUploadedUrl] = useState(lead?.profilePhoto || "");
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
     reset({
@@ -56,54 +55,48 @@ export default function LeadFormModal({
       assignedTo: lead?.assignedTo || "",
       status: lead?.status || "",
       priority: lead?.priority || "",
-      profilePhoto: lead?.profilePhoto || "",
+      imageUrl: lead?.imageUrl || "",
     });
-    setUploadedUrl(lead?.profilePhoto || "");
+    setPreviewUrl(lead?.imageUrl || "");
   }, [lead, reset]);
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-    setUploadError(null);
-  };
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const uploadToCloudinary = async (file) => {
+    setUploading(true);
+
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "unsigned_preset");
+    formData.append("upload_preset", "unsigned_preset"); // 🟡 Use your unsigned preset
 
     try {
-      setUploading(true);
-      const res = await fetch(
+      const response = await fetch(
         "https://api.cloudinary.com/v1_1/dbjueuler/image/upload",
         {
           method: "POST",
           body: formData,
         }
       );
-      const data = await res.json();
-      setUploading(false);
-      return data.secure_url;
+
+      const data = await response.json();
+      setValue("imageUrl", data.secure_url); // 🟡 Save URL in form
+      setPreviewUrl(data.secure_url);
     } catch (err) {
-      console.error("Upload error:", err);
-      setUploadError("Image upload failed");
+      console.error("Upload failed", err);
+    } finally {
       setUploading(false);
-      return null;
     }
   };
 
-  const handleFormSubmit = async (data) => {
-    let photoUrl = uploadedUrl;
-
-    if (selectedFile) {
-      const url = await uploadToCloudinary(selectedFile);
-      if (!url) return;
-      photoUrl = url;
+  const handleFormSubmit = (data) => {
+    if (lead?.id) {
+      onSubmit({ id: lead.id, ...data });
+    } else {
+      onSubmit(data);
     }
-
-    onSubmit({ ...data, profilePhoto: photoUrl });
     reset();
-    setSelectedFile(null);
-    setUploadedUrl(photoUrl);
+    setPreviewUrl("");
   };
 
   return (
@@ -112,7 +105,6 @@ export default function LeadFormModal({
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogContent>
           <Grid container spacing={2}>
-            {/* Existing Fields */}
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
@@ -145,6 +137,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Source"
+                defaultValue={lead?.source || ""}
                 {...register("source")}
                 error={!!errors.source}
                 helperText={errors.source?.message}
@@ -161,6 +154,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Assigned Staff"
+                defaultValue={lead?.assignedTo || ""}
                 {...register("assignedTo")}
                 error={!!errors.assignedTo}
                 helperText={errors.assignedTo?.message}
@@ -177,6 +171,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Status"
+                defaultValue={lead?.status || ""}
                 {...register("status")}
                 error={!!errors.status}
                 helperText={errors.status?.message}
@@ -193,6 +188,7 @@ export default function LeadFormModal({
                 select
                 fullWidth
                 label="Priority"
+                defaultValue={lead?.priority || ""}
                 {...register("priority")}
                 error={!!errors.priority}
                 helperText={errors.priority?.message}
@@ -204,17 +200,20 @@ export default function LeadFormModal({
                 ))}
               </TextField>
             </Grid>
-
-            {/* Profile Photo Upload */}
-            <Grid item xs={12} sm={6}>
-              <input type="file" accept="image/*" onChange={handleFileChange} />
+            {/* 🟡 Image Upload */}
+            <Grid item xs={12}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+              />
               {uploading && <p>Uploading...</p>}
-              {uploadError && <p style={{ color: "red" }}>{uploadError}</p>}
-              {uploadedUrl && (
+              {previewUrl && (
                 <img
-                  src={uploadedUrl}
-                  alt="Profile Preview"
-                  style={{ width: 100, height: 100, borderRadius: "50%", marginTop: 10 }}
+                  src={previewUrl}
+                  alt="Preview"
+                  style={{ maxWidth: "100%", marginTop: "10px" }}
                 />
               )}
             </Grid>
