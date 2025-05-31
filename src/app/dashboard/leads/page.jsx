@@ -1,7 +1,7 @@
 "use client";
 
-import LeadList from '@/app/components/lead/LeadList';
-import { useLeads } from '@/features/leads/hooks';
+import LeadList from "@/app/components/lead/LeadList";
+import { useLeads } from "@/features/leads/hooks";
 import {
   Box,
   Typography,
@@ -12,38 +12,58 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from '@mui/material';
-import { useState, useMemo } from 'react';
-
+} from "@mui/material";
+import { useState, useMemo } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 export default function LeadDashboardPage() {
   const { data: leads = [], isLoading, isError } = useLeads();
 
-  const [statusFilter, setStatusFilter] = useState('');
-  const [priorityFilter, setPriorityFilter] = useState('');
-  const [sourceFilter, setSourceFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
+  const [sourceFilter, setSourceFilter] = useState("");
 
   const filteredLeads = useMemo(() => {
-    return leads.filter((lead) => {
+    let visibleLeads = leads;
+  
+    // If user is a sales-rep, only show leads assigned to them
+    if (userRole === 'sales-rep') {
+      visibleLeads = leads.filter((lead) => lead.assignedTo === userEmail);
+    }
+  
+    return visibleLeads.filter((lead) => {
       return (
         (statusFilter === '' || lead.status === statusFilter) &&
         (priorityFilter === '' || lead.priority === priorityFilter) &&
         (sourceFilter === '' || lead.source === sourceFilter)
       );
     });
-  }, [leads, statusFilter, priorityFilter, sourceFilter]);
-
+  }, [leads, statusFilter, priorityFilter, sourceFilter, userRole, userEmail]);
+  
   const leadStats = useMemo(() => {
     const stats = { total: leads.length, converted: 0, lost: 0, inProgress: 0 };
     leads.forEach((lead) => {
-      if (lead.status === 'Converted') stats.converted++;
-      else if (lead.status === 'Lost') stats.lost++;
-      else if (lead.status === 'In Progress') stats.inProgress++;
+      if (lead.status === "Converted") stats.converted++;
+      else if (lead.status === "Lost") stats.lost++;
+      else if (lead.status === "In Progress") stats.inProgress++;
     });
     return stats;
   }, [leads]);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  if (status === "loading") return <CircularProgress />;
+  if (!session) {
+    router.push("/login");
+    return null;
+  }
+
+  const userRole = session.user.role;
+  const userEmail = session.user.email;
 
   if (isLoading) return <CircularProgress />;
-  if (isError) return <Typography color="error">Error loading leads</Typography>;
+  if (isError)
+    return <Typography color="error">Error loading leads</Typography>;
 
   return (
     <Box p={4}>
