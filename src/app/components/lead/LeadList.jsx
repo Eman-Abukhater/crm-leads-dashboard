@@ -20,18 +20,23 @@ import {
 import { Edit, Info } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteLeads, addLead, editLead ,assignLeads} from "@/features/leads/services";
+import { deleteLeads, addLead, editLead, assignLeads } from "@/features/leads/services";
 import { useRouter } from "next/navigation";
-import LeadFormModal from "./LeadFormModal"; // Importing the modal component for adding/editing leads
+import LeadFormModal from "./LeadFormModal";
 import { toast } from "react-toastify";
-import { useLeads } from "@/features/leads/hooks"; // Custom hook to fetch leads
+import { useSession } from "next-auth/react";  // <-- import useSession
+
 export default function LeadList({ leadsfilter }) {
   const router = useRouter();
-  const leads = leadsfilter || [];
-  // State management for modal visibility and lead editing
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [editModal, setEditModal] = useState({ open: false, lead: null });
-  // Importing the necessary services for lead operations
+  const { data: session } = useSession();
+  const userRole = session?.user?.role; // assuming user role is stored here
+  const userEmail = session?.user?.email;
+
+  // Filter leads based on role
+  let leads = leadsfilter || [];
+  if (userRole === "rep") {
+    leads = leads.filter((lead) => lead.assignedTo === userEmail);
+  }
 
   const queryClient = useQueryClient();
   const deleteMutation = useMutation({
@@ -53,27 +58,25 @@ export default function LeadList({ leadsfilter }) {
   const editLeadMutation = useMutation({
     mutationFn: editLead,
     onSuccess: () => {
-      queryClient.invalidateQueries(["leads"]); // Re-fetch updated leads
+      queryClient.invalidateQueries(["leads"]);
       toast.success("The lead was updated successfully! 🎉");
     },
   });
-  
+
   const [localLeads, setLocalLeads] = useState([]);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Initialize leads with the  filtered data
   useEffect(() => {
-    setLocalLeads(leadsfilter || []);
+    setLocalLeads(leads);
     setSelected([]);
     setPage(0);
-  }, [leadsfilter]);
-  
+  }, [leadsfilter, userRole, userEmail]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const allIds = leads.map((lead) => lead.id);
+      const allIds = localLeads.map((lead) => lead.id);
       setSelected(allIds);
     } else {
       setSelected([]);
@@ -94,9 +97,14 @@ export default function LeadList({ leadsfilter }) {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
- 
+
   const handleBulkDelete = () => {
     deleteMutation.mutate({ ids: selected });
+    setSelected([]);
+  };
+
+  const handleBulkAssign = (assignee) => {
+    assignMutation.mutate({ ids: selected, assignee });
     setSelected([]);
   };
 
@@ -104,7 +112,7 @@ export default function LeadList({ leadsfilter }) {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-  // Modal for adding/editing leads
+
   const dropdownOptions = {
     sources: [
       "Website",
@@ -121,39 +129,34 @@ export default function LeadList({ leadsfilter }) {
     priorities: ["Low", "Medium", "High"],
   };
 
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModal, setEditModal] = useState({ open: false, lead: null });
+
   const handleAddSubmit = (data) => {
     addLeadMutation.mutate(data);
     setAddModalOpen(false);
   };
 
-  const handleEditSubmit = (data) => {  
+  const handleEditSubmit = (data) => {
     editLeadMutation.mutate(data);
     setEditModal({ open: false, lead: null });
-  };
-  const handleBulkAssign = (assignee) => {
-    assignMutation.mutate({ ids: selected, assignee });
-    setSelected([]);
   };
 
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h6">Leads</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setAddModalOpen(true)}
-        >
-          Add Lead
-        </Button>
+
+        {/* Add Lead button only for admin and manager */}
+        {(userRole === "admin" || userRole === "manager") && (
+          <Button variant="contained" color="primary" onClick={() => setAddModalOpen(true)}>
+            Add Lead
+          </Button>
+        )}
       </Box>
 
-      {selected.length > 0 && (
+      {/* Bulk actions only for admin and manager */}
+      {(userRole === "admin" || userRole === "manager") && selected.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
           <Typography>{selected.length} selected</Typography>
           <Select
@@ -168,12 +171,7 @@ export default function LeadList({ leadsfilter }) {
             <MenuItem value="rep@crm.com">rep@crm.com</MenuItem>
             <MenuItem value="manager@crm.com">manager@crm.com</MenuItem>
           </Select>
-          <Button
-            size="small"
-            color="error"
-            variant="outlined"
-            onClick={handleBulkDelete}
-          >
+          <Button size="small" color="error" variant="outlined" onClick={handleBulkDelete}>
             Delete Selected
           </Button>
         </Box>
@@ -184,15 +182,15 @@ export default function LeadList({ leadsfilter }) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selected.length === localLeads.length}
-                    indeterminate={
-                      selected.length > 0 && selected.length < localLeads.length
-                    }
-                    onChange={handleSelectAllClick}
-                  />
-                </TableCell>
+                {(userRole === "admin" || userRole === "manager") && (
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selected.length === localLeads.length && localLeads.length > 0}
+                      indeterminate={selected.length > 0 && selected.length < localLeads.length}
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
+                )}
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Company</TableCell>
@@ -207,12 +205,14 @@ export default function LeadList({ leadsfilter }) {
             <TableBody>
               {paginatedLeads.map((lead) => (
                 <TableRow key={lead.id} hover>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selected.includes(lead.id)}
-                      onChange={() => handleSelect(lead.id)}
-                    />
-                  </TableCell>
+                  {(userRole === "admin" || userRole === "manager") && (
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selected.includes(lead.id)}
+                        onChange={() => handleSelect(lead.id)}
+                      />
+                    </TableCell>
+                  )}
                   <TableCell>{lead.name}</TableCell>
                   <TableCell>{lead.email}</TableCell>
                   <TableCell>{lead.company}</TableCell>
@@ -221,15 +221,18 @@ export default function LeadList({ leadsfilter }) {
                   <TableCell>{lead.priority}</TableCell>
                   <TableCell>{lead.assignedTo}</TableCell>
                   <TableCell>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => setEditModal({ open: true, lead })}
-                    >
-                      <Edit />
-                    </IconButton>
+                    {/* Edit button only for admin and manager */}
+                    {(userRole === "admin" || userRole === "manager") && (
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={() => setEditModal({ open: true, lead })}
+                      >
+                        <Edit />
+                      </IconButton>
+                    )}
 
-                    {/*Add Details Button */}
+                    {/* Details button visible for all roles */}
                     <IconButton
                       size="small"
                       color="info"
@@ -264,7 +267,7 @@ export default function LeadList({ leadsfilter }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={leads.length}
+          count={localLeads.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

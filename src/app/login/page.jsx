@@ -28,7 +28,7 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-        router.push('/');
+        router.push('/dashboard/leads');
         toast.success('Login successful! 🎉');
       } else {
         toast.error('Invalid email or password');
