@@ -143,7 +143,7 @@ export default function LeadDashboardPage() {
       </Grid>
 
       {/* Chart Section */}
-      <Box sx={{ mt: 4, maxWidth: 600 }}>
+      <Box sx={{ my: 4, maxWidth: 500 }}>
         <Paper elevation={3} sx={{ p: 2 }}>
           <Bar data={chartData} options={chartOptions} />
         </Paper>
