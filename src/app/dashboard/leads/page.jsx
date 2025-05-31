@@ -17,8 +17,10 @@ import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 export default function LeadDashboardPage() {
+  const { data: session, status } = useSession();
   const { data: leads = [], isLoading, isError } = useLeads();
-
+  const userRole = session?.user?.role;
+  const userEmail = session?.user?.email;
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
@@ -49,7 +51,6 @@ export default function LeadDashboardPage() {
     });
     return stats;
   }, [leads]);
-  const { data: session, status } = useSession();
   const router = useRouter();
 
   if (status === "loading") return <CircularProgress />;
@@ -58,8 +59,6 @@ export default function LeadDashboardPage() {
     return null;
   }
 
-  const userRole = session.user.role;
-  const userEmail = session.user.email;
 
   if (isLoading) return <CircularProgress />;
   if (isError)

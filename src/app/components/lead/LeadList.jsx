@@ -227,7 +227,7 @@ export default function LeadList({ leadsfilter }) {
                   <TableCell>{lead.assignedTo}</TableCell>
                   <TableCell>
                     {/* Edit button only for admin and manager */}
-                    {(userRole === "admin" || userRole === "manager") && (
+                    {(userRole === "admin" || userRole === "manager" || (userRole === "rep" && lead.assignedTo === userEmail)) && (
                       <IconButton
                         size="small"
                         color="primary"
