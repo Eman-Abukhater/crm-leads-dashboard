@@ -12,6 +12,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Button,
 } from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import {
@@ -32,7 +33,7 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+import { signOut } from "next-auth/react";
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -110,9 +111,21 @@ export default function LeadDashboardPage() {
 
   return (
     <Box p={4}>
-      <Typography variant="h4" gutterBottom>
-        Lead Dashboard
-      </Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+      >
+        <Typography variant="h4">Lead Dashboard</Typography>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={() => signOut({ callbackUrl: "/login" })}
+        >
+          Logout
+        </Button>
+      </Box>
 
       {/* Stats Section */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
